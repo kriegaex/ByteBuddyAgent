@@ -20,31 +20,6 @@
     <version.bytebuddy>1.10.9</version.bytebuddy>
   </properties>
 
-  <build>
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.22.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-    </plugins>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>net.bytebuddy</groupId>
@@ -56,7 +31,7 @@
       <artifactId>byte-buddy-agent</artifactId>
       <version>${version.bytebuddy}</version>
     </dependency>
-    <!-- For testing the agent via VirtualMachine.loadAgent -->
+    <!-- For test via ByteBuddyAgent.install() -->
     <dependency>
       <groupId>com.sun</groupId>
       <artifactId>tools</artifactId>
@@ -70,7 +45,6 @@
       <version>4.13</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
 </project>

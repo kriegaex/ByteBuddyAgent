@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * This is an integration test because it needs an up-to-date agent JAR which is created during the
  * Maven 'package' phase and thus is ready for phase 'integration-test' but not for 'test' yet.
  */
-public class JREClassTransformerIT {
+public class JREClassTransformerTest {
   private final static PrintStream systemOutOriginal = System.out;
 
   private String lastPrintlnMessage;
