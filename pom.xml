@@ -30,23 +30,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Agent-Class>de.scrum_master.agent.bytebuddy.JRETransformingAgent</Agent-Class>
-              <Premain-Class>de.scrum_master.agent.bytebuddy.JRETransformingAgent</Premain-Class>
-              <Can-Redefine-Classes>true</Can-Redefine-Classes>
-              <Can-Retransform-Classes>true</Can-Retransform-Classes>
-              <Can-Set-Native-Method-Prefix>true</Can-Set-Native-Method-Prefix>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>2.22.2</version>
         <executions>
@@ -66,6 +49,11 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
+      <version>${version.bytebuddy}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-agent</artifactId>
       <version>${version.bytebuddy}</version>
     </dependency>
     <!-- For testing the agent via VirtualMachine.loadAgent -->

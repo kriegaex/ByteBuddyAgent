@@ -1,6 +1,5 @@
 package de.scrum_master.agent.bytebuddy;
 
-import com.sun.tools.attach.VirtualMachine;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 import net.bytebuddy.asm.Advice;
@@ -11,42 +10,13 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
-import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 
 import static net.bytebuddy.matcher.ElementMatchers.*;
 
-public class JRETransformingAgent {
-  /**
-   * Dynamically attach this Java agent class to the running local JVM. This method can be used
-   * as an alternative to the command line parameter {@code -javaagent:/path/to/thisAgent.jar}.
-   * In order to activate the attach API, up to Java 8 {@code tools.jar} from the JDK needs to be
-   * on the classpath. For Java 9+ please set property {@code -Djdk.attach.allowAttachSelf}.
-   *
-   * @param jarFilePath path to the Java agent JAR containing this class
-   * @return {@code true} if the agent could be attached successfully; {@code false} otherwise
-   */
-  public static boolean dynamicallyLoadAgent(String jarFilePath) {
-    String nameOfRunningVM = ManagementFactory.getRuntimeMXBean().getName();
-    int p = nameOfRunningVM.indexOf('@');
-    String pid = nameOfRunningVM.substring(0, p);
-    try {
-      VirtualMachine vm = VirtualMachine.attach(pid);
-      vm.loadAgent(jarFilePath);
-      vm.detach();
-    } catch (Exception e) {
-      System.out.println(e);
-      return false;
-    }
-    return true;
-  }
-
-  public static void agentmain(String options, Instrumentation instrumentation) {
-    premain(options, instrumentation);
-  }
-
-  public static void premain(String options, Instrumentation instrumentation) {
+public class JREClassTransformer {
+  public static void perform(Instrumentation instrumentation) {
     registerApplicationClassTransformer(instrumentation);
     redefineClasses(instrumentation, String.class);
   }
