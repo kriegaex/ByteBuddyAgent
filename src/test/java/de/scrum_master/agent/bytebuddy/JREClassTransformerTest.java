@@ -1,11 +1,15 @@
 package de.scrum_master.agent.bytebuddy;
 
 import net.bytebuddy.agent.ByteBuddyAgent;
+import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.PrintStream;
+import java.lang.instrument.Instrumentation;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -53,8 +57,8 @@ public class JREClassTransformerTest {
     assertEquals("", lastPrintlnMessage);
 
     // Apply bytecode transformation
-    ByteBuddyAgent.install();
-    JREClassTransformer.perform(ByteBuddyAgent.getInstrumentation());
+    Instrumentation instrumentation = ByteBuddyAgent.install();
+    List<ResettableClassFileTransformer> transformers = JREClassTransformer.perform(instrumentation);
 
     // After redefinition the logic of String.matches(String regex) is reversed and
     // timing messages are being printed to the system console
@@ -62,6 +66,19 @@ public class JREClassTransformerTest {
     assertTrue(lastPrintlnMessage.contains("String.matches(java.lang.String) took "));
     assertFalse("foo".matches("foo"));
     assertTrue(lastPrintlnMessage.contains("String.matches(java.lang.String) took "));
+
+    // Reset bytecode transformation
+    for (ResettableClassFileTransformer transformer : transformers)
+      transformer.reset(instrumentation, AgentBuilder.RedefinitionStrategy.REDEFINITION);
+
+    // Reset last printed message
+    lastPrintlnMessage = "";
+
+    // Normal behaviour after resetting transformers
+    assertFalse("foo".matches("bar"));
+    assertEquals("", lastPrintlnMessage);
+    assertTrue("foo".matches("foo"));
+    assertEquals("", lastPrintlnMessage);
   }
 
 }
