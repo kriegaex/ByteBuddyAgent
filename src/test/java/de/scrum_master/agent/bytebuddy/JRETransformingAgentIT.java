@@ -60,5 +60,12 @@ public class JRETransformingAgentIT {
     assertTrue(lastPrintlnMessage.contains("String.matches(java.lang.String) took "));
     assertFalse("foo".matches("foo"));
     assertTrue(lastPrintlnMessage.contains("String.matches(java.lang.String) took "));
+
+    // Check application class transformer too
+    lastPrintlnMessage = "";
+    new MyTimed().doSomethingElse();
+    assertEquals("", lastPrintlnMessage);
+    new MyTimed().doSomething(11);
+    assertTrue(lastPrintlnMessage.contains("MyTimed.doSomething(int) took "));
   }
 }
