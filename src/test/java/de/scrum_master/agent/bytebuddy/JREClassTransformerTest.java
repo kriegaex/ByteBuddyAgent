@@ -67,18 +67,32 @@ public class JREClassTransformerTest {
     assertFalse("foo".matches("foo"));
     assertTrue(lastPrintlnMessage.contains("String.matches(java.lang.String) took "));
 
-    // Reset bytecode transformation
+    // Check application class transformer too
+    lastPrintlnMessage = "";
+    new MyTimed().doSomethingElse();
+    assertEquals("", lastPrintlnMessage);
+    new MyTimed().doSomething(11);
+    assertTrue(lastPrintlnMessage.contains("MyTimed.doSomething(int) took "));
+
+    // Try to reset bytecode transformation, which only works for the JRE transformer which
+    // used REDEFINITION strategy and disableClassFormatChanges() before. The application
+    // classes were structurally altered during class-loading and cannot be reset to original
+    // once they have been loaded.
     for (ResettableClassFileTransformer transformer : transformers)
       transformer.reset(instrumentation, AgentBuilder.RedefinitionStrategy.REDEFINITION);
 
     // Reset last printed message
     lastPrintlnMessage = "";
 
-    // Normal behaviour after resetting transformers
+    // Normal behaviour for JRE classes after resetting transformers
     assertFalse("foo".matches("bar"));
     assertEquals("", lastPrintlnMessage);
     assertTrue("foo".matches("foo"));
     assertEquals("", lastPrintlnMessage);
+
+    // But still transformation is active for application classes
+    new MyTimed().doSomething(11);
+    assertTrue(lastPrintlnMessage.contains("MyTimed.doSomething(int) took "));
   }
 
 }
